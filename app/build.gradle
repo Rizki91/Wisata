@@ -55,7 +55,7 @@ dependencies {
     implementation 'com.squareup.picasso:picasso:2.71828'
 
     //Geolocator
-    implementation 'com.github.AravindVijay7:GeoLocator-Android:1.0.2'
+    implementation 'com.github.AravindVijay7:GeoLocator-Android:2.0.0'
 
 
 }
