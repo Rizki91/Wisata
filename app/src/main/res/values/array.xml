@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="kategori">
+        <item>Kuliner Inovasi</item>
+        <item>Kuliner Tradisonal</item>
+        <item>Kuliner Khas</item>
+    </string-array>
+</resources>
