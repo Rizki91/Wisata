@@ -1,14 +1,23 @@
 package com.fahrul.wisata.ui;
 
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
 //import androidx.appcompat.widget.Toolbar;
 
 
+import android.Manifest;
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,6 +27,10 @@ import android.widget.Toolbar;
 
 
 import com.fahrul.wisata.R;
+import com.fahrul.wisata.model.Lokasi;
+import com.fahrul.wisata.utility.SharedPrefUtil;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -26,15 +39,27 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.gson.Gson;
 import com.location.aravind.getlocation.GeoLocator;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import com.valdesekamdem.library.mdtoast.MDToast;
 
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback,GoogleMap.OnMarkerClickListener {
+
 
     private GoogleMap mMap;
     TextView txtNama,txtAlamat,txtPhone;
     private  int datass;
     private  double lat= 0.0, lon = 0.0;
+    GeoLocator geoLocator;
+
 
 
 
@@ -51,10 +76,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
 
 
+
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+
+
+
 
 
         getData();
@@ -70,24 +100,34 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
      * it inside the SupportMapFragment. This method will only be triggered once the user has
      * installed Google Play services and returned to the app.
      */
+
+
+
+
+
     @Override
     public void onMapReady(GoogleMap map) {
 
 
-        GeoLocator geoLocator = new GeoLocator(getApplicationContext(),this);
-        lat = geoLocator.getLattitude();
-        lon = geoLocator.getLongitude();
 
+
+        final Bundle bundle = getIntent().getExtras();
         mMap = map;
         float zoomLevel = 8.0f;
-        LatLng myLocation = new LatLng(lat,lon);
+
+
+        String json = SharedPrefUtil.getInstance(MapsActivity.this).getString("data_input");
+        Lokasi lokasi = new Gson().fromJson(json,Lokasi.class);
+
+
+        LatLng myLocation = new LatLng(lokasi.getLAT(),lokasi.getLON());
         mMap.addMarker(new MarkerOptions()
                 .position(myLocation)
                 .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET))
                 .title("Lokasi Saya"));
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myLocation, zoomLevel)); // zoom
 
-        final Bundle bundle = getIntent().getExtras();
+
         String latlon = bundle.getString("kordinat");
         String[] arr = latlon.split(",");
         String nama = bundle.getString("nama");
